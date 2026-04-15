@@ -15,7 +15,7 @@ class DestinationController extends Controller
       }else{
         $destinations = Destinations::paginate(3);
       }
-        return view('pages.indexDestinasi', compact('destinations'));
+        return view('pages.destination.indexDestinasi', compact('destinations'));
         //
     }
 

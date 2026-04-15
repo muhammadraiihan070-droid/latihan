@@ -16,13 +16,13 @@ class UserController extends Controller
         } else {
             $users= User::paginate(3);
         }
-        return view('pages.indexUser', compact('users'));
+        return view('pages.user.indexUser', compact('users'));
     }
 
     public function show($id)
     {
-        $destination = User::find($id);
-        return view('pages.detailUser', compact('user'));
+        $user = User::find($id);
+        return view('pages.user.showUser', compact('user'));
     }
 
     public function create()
