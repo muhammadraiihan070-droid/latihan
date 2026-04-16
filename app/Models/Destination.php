@@ -1,18 +1,22 @@
 <?php
 
-namespace App\models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Destinations extends Model
+class Destination extends Model
 {
-    protected $table = 'destination';
     protected $fillable = [
         'name',
         'description',
         'location',
         'working_days',
         'working_hours',
-        'ticket_price'
+        'ticket_price',
     ];
+
+    public function attractions()
+    {
+        return $this->hasMany( Attraction::class );
+    }
 }

@@ -1,79 +1,84 @@
 @extends('master')
 
-
 @section('content')
-    <div class="container">
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-        <div>
+
+<div class="container mt-4">
+
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    <div class="card shadow">
+        <div class="card-body">
+
+            {{-- HEADER + SEARCH --}}
             <div class="d-flex justify-content-between mb-3">
-                <a href="/destination/create" class="btn btn-success">Add Destination</a>
-                <h2>List Destinasi</h2>
-                <form action="/destinations" method="GET">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="search..." name="search"
-                            value="{{ request('search') }}">
-                        <button class="btn btn-outline-secondary" type="submit">search</button>
-                    </div>
-                    <div class="mt-3 d-flex justify-content-center">
-                        {{ $destinations->links('pagination::bootstrap-5') }}
-                    </div>
-                    <table class="table table-striped-columns">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Location</th>
-                                <th>Price</th>
-                                <th>Working Hours</th>
-                                <th>Working Days</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                <h4>Data Destinasi</h4>
 
-                            @foreach ($destinations as $dest)
-                                <tr>
-                                    <td>{{ $dest->id }}</td>
-                                    <td>{{ $dest->name }}</td>
-                                    <td>{{ $dest->description }}</td>
-                                    <td>{{ $dest->location }}</td>
-                                    <td>{{ $dest->ticket_price }}</td>
-                                    <td>{{ $dest->working_hours }}</td>
-                                    <td>{{ $dest->working_days }}</td>
-                                    <td>
-                                        <a href="/destinations/{{ $dest->id }}/edit" class="btn btn-warning">Edit</a>
-                                        <form action="/destination/{{ $dest->id }}" method="post"
-                                            style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="return confirm('Are you sure to delete {{ $dest->name }}?')">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="d-flex gap-2">
+                    <form action="{{ route('destinations.index') }}" method="GET" class="d-flex">
+                        <input type="text" name="search" class="form-control me-2"
+                               placeholder="Cari nama..."
+                               value="{{ request('search') }}">
+                        <button class="btn btn-primary">Search</button>
+                    </form>
+
+                    <a href="{{ route('destinations.create') }}" class="btn btn-success">
+                        + Tambah
+                    </a>
+                </div>
             </div>
-        @endsection
 
-        @push('scripts')
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const alertEl = document.querySelector('.alert');
-                    if (!alertEl) return;
-                    setTimeout(() => {
-                        alertEl.style.transition = 'opacity 0.5s ease-out';
-                        alertEl.style.opacity = '0';
-                        setTimeout(() => alertEl.remove(), 500);
-                    }, 3000);
-                });
-            </script>
-        @endpush
+            {{-- TABLE --}}
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th width="60px">ID</th>
+                        <th>Nama</th>
+                        <th width="220px">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($destination as $d)
+                    <tr>
+                        <td class="text-center">{{ $d->id }}</td>
+                        <td>{{ $d->name }}</td>
+                        <td class="text-center">
+                            <a href="{{ route('destinations.show',$d->id) }}" class="btn btn-info btn-sm">Detail</a>
+                            <a href="{{ route('destinations.edit',$d->id) }}" class="btn btn-warning btn-sm">Edit</a>
+
+                            <form action="{{ route('destinations.delete',$d->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus data?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="3" class="text-center">Data tidak ada</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            {{-- PAGINATION --}}
+            <div class="d-flex justify-content-between">
+                <div>
+                    Showing {{ $destination->firstItem() }} to {{ $destination->lastItem() }} of {{ $destination->total() }} results
+                </div>
+                <div>
+                    {{ $destination->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@endsection

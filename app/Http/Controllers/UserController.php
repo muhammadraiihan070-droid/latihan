@@ -11,60 +11,69 @@ class UserController extends Controller
     {
         $keyword = $request->input('search');
 
-        if ($keyword != '') {
-            $users= User::where('name', 'LIKE', "%{$keyword}%")->paginate(3);
-        } else {
-            $users= User::paginate(3);
-        }
+        $users = User::when($keyword, function ($query, $keyword) {
+            return $query->where('name', 'like', "%$keyword%");
+        })->paginate(5)->withQueryString();
+
         return view('pages.user.indexUser', compact('users'));
     }
 
-    public function show($id)
+    public function show(int $id)
     {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
         return view('pages.user.showUser', compact('user'));
     }
 
     public function create()
     {
-        return view('pages.createUser');
+        return view('pages.user.createUser');
     }
 
     public function store(Request $request)
     {
-        User::create($request->all());
-        return redirect('/user')->with('success', 'User created successfully.');
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password) // 🔥 penting
+        ]);
+
+        return redirect('/user')->with('success', 'User berhasil ditambahkan');
     }
 
-    public function delete($id)
+    public function edit(int $id)
     {
-        $user = User::find($id);
-
-        if ($user) {
-            $user->delete();
-            return redirect('/user')->with('success', 'User deleted successfully.');
-        } else {
-            return redirect('/user')->with('error', 'User not found.');
-        }
+        $user = User::findOrFail($id);
+        return view('pages.user.editUser', compact('user'));
     }
 
-    public function edit($id)
+    public function update(Request $request, int $id)
     {
-        $user = User::find($id);
-        return view('pages.editUser', compact('user'));
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email'
+        ]);
+
+        $user = User::findOrFail($id);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email
+        ]);
+
+        return redirect('/user')->with('success', 'User berhasil diupdate');
     }
 
-    public function update(Request $request, $id)
+    public function destroy(int $id) // 🔥 harus destroy
     {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
+        $user->delete();
 
-        if ($user) {
-           
-            $user->update($request->all());
-            
-            return redirect('/user')->with('success', 'User updated successfully.');
-        } else {
-            return redirect('/user')->with('error', 'User not found.');
-        }
+        return redirect('/user')->with('success', 'User berhasil dihapus');
     }
 }

@@ -1,35 +1,45 @@
-<?php
-// contoh: $user diambil dari database sebelumnya
-// $user = mysqli_fetch_assoc(...);
-?>
+@extends('master')
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit User</title>
-    <link rel="stylesheet" href="bootstrap.css"> <!-- opsional -->
-</head>
-<body>
+@section('content')
 
-<form action="/users/{{$user->id}}/update" method="post" class="form-floating">
-@csrf
-@method('PUT')
-    <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="floatingInput" placeholder="Nama User" 
-               name="name" value="{{$user->name}}">
-        <label for="floatingInput">Nama </label>
+@if ($errors->any())
+    <div class="allert allert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+            <li>{{ $errors}}</li>
+            @endforeach
+        </ul>
     </div>
+@endif
 
-    <div class="form-floating">
-        <input name="email" class="form-control" placeholder="email" value="{{$user->email}}">
-        <label for="email">Email</label>
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-warning">
+            Edit User
+        </div>
+
+        <div class="card-body">
+            <form action="{{ route('users.update', $user->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="mb-3">
+                    <label>Nama</label>
+                    <input type="text" name="name" class="form-control"
+                           value="{{ $user->name }}" required value="{{old('nama')}}"
+                </div>
+
+                <div class="mb-3">
+                    <label>Email</label>
+                    <input type="email" name="email" class="form-control"
+                           value="{{ $user->email }}" required value="{{old('email')}}"
+                </div>
+
+                <button class="btn btn-warning">Update</button>
+                <a href="/user" class="btn btn-secondary">Kembali</a>
+            </form>
+        </div>
     </div>
+</div>
 
-   
-
-    <button type="submit" class="btn btn-primary">Submit</button>
-
-</form>
-
-</body>
-</html>
+@endsection

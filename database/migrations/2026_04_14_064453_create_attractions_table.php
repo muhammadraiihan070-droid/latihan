@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('attractions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId(column: 'destination_id')->constrained()->onDelete(action:'cascade');
             $table->string("nama");
             $table->text("description");
             $table->timestamps();

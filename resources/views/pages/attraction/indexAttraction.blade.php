@@ -1,72 +1,72 @@
 @extends('master')
 
-
 @section('content')
-    <div class="container">
+    <div class="container mt-4">
+
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
-        <div>
-            <div class="d-flex justify-content-between mb-3">
-                <a href="{{route('attractions.create')}}" class="btn btn-success">Add Destination</a>
-                <h2>List Destinasi</h2>
-                <form action="/destinations" method="GET">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="search..." name="search"
-                            value="{{ request('search') }}">
-                        <button class="btn btn-outline-secondary" type="submit">search</button>
-                    </div>
-                    <div class="mt-3 d-flex justify-content-center">
-                        {{ $attractions->links('pagination::bootstrap-5') }}
-                    </div>
-                    <table class="table table-striped-columns">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                
-                            </tr>
-                        </thead>
-                        <tbody>
 
-                            @foreach ($attractions as $dest)
-                                <tr>
-                                    <td>{{ $dest->id }}</td>
-                                    <td>{{ $dest->name }}</td>
-                                    <td>{{ $dest->description }}</td>
-                                    
-                                    <td>
-                                        <a href="{{route("attractions.edit", $dest->id)}}" class="btn btn-warning">Edit</a>
-                                        <form action="/destination/{{ $dest->id }}" method="post"
-                                            style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="return confirm('Are you sure to delete {{ $dest->name }}?')">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+        <div class="d-flex justify-content-between mb-3">
+            <h4>Data Attraction</h4>
+
+            <div class="d-flex gap-2">
+                <form action="{{ route('attractions.index') }}" method="GET" class="d-flex">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Cari..."
+                        value="{{ request('search') }}">
+                    <button class="btn btn-primary">Search</button>
+                </form>
+
+                <a href="{{ route('attractions.create') }}" class="btn btn-success">+ Tambah</a>
             </div>
-        @endsection
+        </div>
 
-        @push('scripts')
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const alertEl = document.querySelector('.alert');
-                    if (!alertEl) return;
-                    setTimeout(() => {
-                        alertEl.style.transition = 'opacity 0.5s ease-out';
-                        alertEl.style.opacity = '0';
-                        setTimeout(() => alertEl.remove(), 500);
-                    }, 3000);
-                });
-            </script>
-        @endpush
+        <div class="card shadow">
+            <div class="card-body">
+
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama</th>
+                            <th>Deskripsi</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($attractions as $a)
+                            <tr>
+                                <td>{{ $a->id }}</td>
+                                <td>{{ $a->nama }}</td>
+                                <td>{{ $a->description }}</td>
+                                <td class="text-center">
+                                    <a href="{{ route('attractions.show', $a->id) }}" class="btn btn-info btn-sm">Detail</a>
+                                    <a href="{{ route('attractions.edit', $a->id) }}" class="btn btn-warning btn-sm">Edit</a>
+
+                                    <form action="{{ route('attractions.destroy', $a->id) }}" method="POST"
+                                        class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">Data kosong</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+                {{ $attractions->links('pagination::bootstrap-5') }}
+
+            </div>
+        </div>
+
+    </div>
+@endsection

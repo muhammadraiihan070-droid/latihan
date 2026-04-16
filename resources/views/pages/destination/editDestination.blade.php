@@ -1,41 +1,66 @@
-@extends("master")
+@extends('master')
 
-@section("content")
-
-<form action="/destinations/{{ $destination->id }}/update" method="post" class="form-floating">
-    @csrf
-    @method("put")
-    <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="floatingInput" placeholder="Asia Heritage" name="name" value="{{ $destination->name }}">
-        <label for="floatingInput">Nama Destinasi</label>
+@section('content')
+@if ($errors->any())
+    <div class="allert allert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+            <li>{{ $errors}}</li>
+            @endforeach
+        </ul>
     </div>
+@endif
 
-    <div class="form-floating">
-        <textarea name="description" id="" class="form-control" placeholder="Description">{{ $destination->description }}</textarea>
-        <label for="description">Description</label>
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-warning">
+            Edit Destinasi
+        </div>
+
+        <div class="card-body">
+            <form action="{{ route('destinations.update',$destination->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="mb-3">
+                    <label>Nama</label>
+                    <input type="text" name="name" value="{{ $destination->name }}" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label>Deskripsi</label>
+                    <textarea name="description" class="form-control">{{ $destination->description }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label>Lokasi</label>
+                    <input type="text" name="location" value="{{ $destination->location }}" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label>Hari Buka</label>
+                    <input type="text" name="working_days"
+                           value="{{ $destination->working_days }}"
+                           class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label>Jam Buka</label>
+                    <input type="text" name="working_hours"
+                           value="{{ $destination->working_hours }}"
+                           class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label>Harga</label>
+                    <input type="number" name="ticket_price" value="{{ $destination->ticket_price }}" class="form-control">
+                </div>
+
+                <button class="btn btn-warning">Update</button>
+                <a href="{{ route('destinations.index') }}" class="btn btn-secondary">Kembali</a>
+            </form>
+        </div>
     </div>
-
-    <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="floatingInput" placeholder="Pekanbaru" name="location" value="{{ $destination->location }}">
-        <label for="floatingInput">Lokasi</label>
-    </div>
-
-    <div class="form-floating mb-3">
-        <input type="number" class="form-control" id="floatingInput" placeholder="100000" name="ticket_price" value="{{ $destination->ticket_price }}">
-        <label for="floatingInput">Harga Tiket</label>
-    </div>
-
-    <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="floatingInput" placeholder="08.00 - 17.00" name="working_hours" value="{{ $destination->working_hours }}">
-        <label for="floatingInput">Jam Operasional</label>
-    </div>
-
-    <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="floatingInput" placeholder="Senin - Minggu" name="working_days" value="{{ $destination->working_days }}">
-        <label for="floatingInput">Hari Operasional</label>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+</div>
 
 @endsection

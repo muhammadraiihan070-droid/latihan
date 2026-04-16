@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('destination', function (Blueprint $table) {
-            $table->text('description')->nullable(true)->change();
-        });
+        Schema::table('destinations', function (Blueprint $table) {
+    $table->text('description')->nullable(true)->change();
+});
+    
     }
 
     /**
@@ -21,9 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('destination', function (Blueprint $table) {
-            $table->text('description')->nullable(false)->change();
-            //
-        });
+        Schema::table('destinations', function (Blueprint $table) {
+    $table->text('description')->nullable(false)->change();
+});
     }
 };
