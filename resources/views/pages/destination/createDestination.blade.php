@@ -21,6 +21,14 @@
             <form action="{{ route('destinations.store') }}" method="POST">
                 @csrf
 
+                <div class="form-floating mb-3">
+                    <input type="file" class="form-control" id="floatingInput" placeholder="Image" name="image" value"{{ old(image) }}" accept=".jpg, .jpeg, .png">
+                    <label for="floatingInput">Gambar Destination</label>
+                    @error('iamge')
+                    <div class="invalid-feedbanck">{{ $message }}</div>
+                    @enderror
+                </div>
+                
                 <div class="mb-3">
                     <label>Nama</label>
                     <input type="text" name="name" class="form-control" required value="{{old('nama')}}"

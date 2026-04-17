@@ -10,6 +10,8 @@
         <div class="card-body">
             <p><b>Nama:</b> {{ $attraction->name }}</p>
             <p><b>Deskripsi:</b> {{ $attraction->description }}</p>
+            <p class="card-text">Destination: {{ $attraction->destination->name ?? 'No destination available.' }}</p>
+            <p class="card text">Descriptiom: {{ $attraction->description ?? 'No description available.'}}</p>
 
             <a href="{{ route('attractions.index') }}" class="btn btn-secondary">Kembali</a>
         </div>

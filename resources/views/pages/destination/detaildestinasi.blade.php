@@ -9,6 +9,8 @@
         </div>
 
         <div class="card-body">
+            <a href="{{ route('destiantions.edit',$destination->id) }}" class="btn-primary aligh-self-end">Edit Destinasi</a>
+            
             <p><b>Nama:</b> {{ $destination->name }}</p>
             <p><b>Deskripsi:</b> {{ $destination->description }}</p>
             <p><b>Lokasi:</b> {{ $destination->location }}</p>

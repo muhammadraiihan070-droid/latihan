@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AttractionController;
+use App\Http\Controllers\ReviewController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -87,3 +88,6 @@ Route::prefix('attractions')->name('attractions.')->group(function () {
 
 });
     
+
+
+Route::resource('reviews',ReviewController::class);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illumniate\Suppoert\Facades\storage;
 use App\Models\Destination;
 
 class DestinationController extends Controller
@@ -41,6 +42,7 @@ class DestinationController extends Controller
             'description' => 'nullable',
             'working_days' => 'nullable',
             'working_hours' => 'nullable',
+            'image' => 'nullable|image|max:2048|mimes:jpg,jpeg,png',
         ]);
 
         Destination::create([
@@ -74,6 +76,17 @@ class DestinationController extends Controller
         ]);
 
         $destination = Destination::findOrFail($id);
+
+        if($destination) {
+            if($destination->image && $request->hasFile('image')){
+                storage::disk('public')->delete('image' . $destination->image);
+            }
+
+            if($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('image', 'public')
+                $validated['image'] = basename($imagePath);
+            }
+        
 
        $destination->update([
     'name' => $request->name,

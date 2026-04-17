@@ -22,6 +22,14 @@
                 @csrf
                 @method('PUT')
 
+                <div class="form-floating mb-3">
+                    <input type="file" class="form-control" id="floatingInput" placeholder="Image" name="image" value="{{ old('image') }}" accept=".jpg, .jpeg, .png">
+                    <label for="floatingInput">Gambar Destinasi</label>
+                    @error('image')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                
                 <div class="mb-3">
                     <label>Nama</label>
                     <input type="text" name="name" value="{{ $destination->name }}" class="form-control">
