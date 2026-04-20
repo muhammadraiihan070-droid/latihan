@@ -12,7 +12,7 @@ class AttractionController extends Controller
     {
         $keyword = $request->search;
 
-        $attractions = Attraction::where('nam','like',"%$keyword%")->latest()->paginate(5);
+        $attractions = Attraction::where('nama','like',"%$keyword%")->latest()->paginate(5);
 
         return view('pages.attraction.indexAttraction', compact('attractions'));
     }

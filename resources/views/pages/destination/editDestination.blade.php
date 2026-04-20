@@ -1,14 +1,15 @@
 @extends('master')
 
 @section('content')
+
 @if ($errors->any())
-    <div class="allert allert-danger">
-        <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-            <li>{{ $errors}}</li>
-            @endforeach
-        </ul>
-    </div>
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
 @endif
 
 <div class="container mt-4">
@@ -18,16 +19,13 @@
         </div>
 
         <div class="card-body">
-            <form action="{{ route('destinations.update',$destination->id) }}" method="POST">
+            <form action="{{ route('destinations.update',$destination->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
-                <div class="form-floating mb-3">
-                    <input type="file" class="form-control" id="floatingInput" placeholder="Image" name="image" value="{{ old('image') }}" accept=".jpg, .jpeg, .png">
-                    <label for="floatingInput">Gambar Destinasi</label>
-                    @error('image')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="mb-3">
+                    <label>Gambar Destinasi</label>
+                    <input type="file" name="image" class="form-control" accept=".jpg,.jpeg,.png">
                 </div>
                 
                 <div class="mb-3">
@@ -47,16 +45,12 @@
 
                 <div class="mb-3">
                     <label>Hari Buka</label>
-                    <input type="text" name="working_days"
-                           value="{{ $destination->working_days }}"
-                           class="form-control">
+                    <input type="text" name="working_days" value="{{ $destination->working_days }}" class="form-control">
                 </div>
 
                 <div class="mb-3">
                     <label>Jam Buka</label>
-                    <input type="text" name="working_hours"
-                           value="{{ $destination->working_hours }}"
-                           class="form-control">
+                    <input type="text" name="working_hours" value="{{ $destination->working_hours }}" class="form-control">
                 </div>
 
                 <div class="mb-3">

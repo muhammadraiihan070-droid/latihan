@@ -88,6 +88,12 @@ Route::prefix('attractions')->name('attractions.')->group(function () {
 
 });
     
+require __DIR__ . '/auth.php';
+
+Route::get('/dashboard', function () {
+    return redirect()->route('destinations.index');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 
 Route::resource('reviews',ReviewController::class);

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illumniate\Suppoert\Facades\storage;
 use App\Models\Destination;
+use Illuminate\Support\Facades\Storage;
 
 class DestinationController extends Controller
 {
@@ -45,6 +45,13 @@ class DestinationController extends Controller
             'image' => 'nullable|image|max:2048|mimes:jpg,jpeg,png',
         ]);
 
+        $imageName = null;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('image', 'public');
+            $imageName = basename($imagePath);
+        }
+
         Destination::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -52,6 +59,7 @@ class DestinationController extends Controller
             'working_days' => $request->working_days,
             'working_hours' => $request->working_hours,
             'ticket_price' => $request->ticket_price,
+            'image' => $imageName,
         ]);
 
         return redirect()->route('destinations.index')
@@ -66,36 +74,30 @@ class DestinationController extends Controller
 
     public function update(Request $request, int $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required',
             'location' => 'required',
             'ticket_price' => 'required|numeric',
             'description' => 'nullable',
-            'working_days' => 'nullable',
-            'working_hours' => 'nullable',
+            'working_days' => 'required',
+            'working_hours' => 'required',
+            'image' => 'nullable|image|max:2048|mimes:jpeg,jpg,png',
         ]);
 
         $destination = Destination::findOrFail($id);
 
-        if($destination) {
-            if($destination->image && $request->hasFile('image')){
-                storage::disk('public')->delete('image' . $destination->image);
-            }
+        // hapus gambar lama jika upload baru
+        if ($destination->image && $request->hasFile('image')) {
+            Storage::disk('public')->delete('image/' . $destination->image);
+        }
 
-            if($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('image', 'public')
-                $validated['image'] = basename($imagePath);
-            }
-        
+        // upload gambar baru
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('image', 'public');
+            $validated['image'] = basename($imagePath);
+        }
 
-       $destination->update([
-    'name' => $request->name,
-    'description' => $request->description,
-    'location' => $request->location,
-    'working_days' => $request->working_days ?? '-',
-    'working_hours' => $request->working_hours ?? '-',
-    'ticket_price' => $request->ticket_price,
-]);
+        $destination->update($validated);
 
         return redirect()->route('destinations.index')
                          ->with('success', 'Berhasil update');
@@ -104,6 +106,12 @@ class DestinationController extends Controller
     public function delete(int $id)
     {
         $destination = Destination::findOrFail($id);
+
+        // hapus gambar dari storage
+        if ($destination->image) {
+            Storage::disk('public')->delete('image/' . $destination->image);
+        }
+
         $destination->delete();
 
         return redirect()->route('destinations.index')
